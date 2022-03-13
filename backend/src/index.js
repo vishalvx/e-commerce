@@ -1,19 +1,32 @@
 import express, { json } from "express";
 import "./config.js";
 import { connectDb } from "./db.js";
+import  errorMiddleware  from "./middleware/error.js";
 //import Router and rename it
 import products from "./routes/productsRoutes.js"
 
 
 // making instance
 const app = express();
+var server;
+
+// Uncaught Error Handling
+process.on("uncaughtException",(err)=>{
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting Down Server Because Of Uncaught Exception")
+  process.exit(1);
+})
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
+
 // Routes 
 
 app.use("/api",products)
 
+// error handler middleware
+// this middleware must use below routes call
+app.use(errorMiddleware);
 
 
 
@@ -26,7 +39,7 @@ const startApp = async () => {
       });
     });
 
-    app.listen(process.env.PORT, () => {
+     server = app.listen(process.env.PORT, () => {
       console.log(`Backend running on http://localhost:${process.env.PORT}`);
     });
   } catch (error) {
@@ -34,6 +47,15 @@ const startApp = async () => {
   }
 };
 
+
+//Unhandled Error Rejection 
+process.on("unhandledRejection",err=>{
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting Down Server")
+  server.close(()=>{
+    process.exit(1);
+  })
+})
 connectDb().then(() => {
   startApp();
 });
