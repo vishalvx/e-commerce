@@ -56,4 +56,11 @@ export default class ApiFeature {
 
     return this;
   }
+  pagination(resultsPerPage){
+    const currentPage = Number(this.queryStr.page) || 1; //e.g. page =2
+    const skip = resultsPerPage * (currentPage-1); //10 * (1) 
+    this.query = this.query.limit(resultsPerPage).skip(skip);
+    console.log("currentPage "+currentPage,"Skip "+skip)
+    return this;
+  }
 }

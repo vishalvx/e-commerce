@@ -14,8 +14,12 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 });
 // Get ALl Products
 export const getAllProducts = asyncHandler(async (req, res, next) => {
+  const resultsPerPage = 10;
   // apifeature is instance of ApiFeature
-  const apiFeature = new ApiFeature(Product.find(),req.query).search().filter();
+  const apiFeature = new ApiFeature(Product.find(), req.query)
+    .search()
+    .filter()
+    .pagination(resultsPerPage);
   // console.log(apiFeature)
   const products = await apiFeature.query;
 
