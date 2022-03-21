@@ -1,3 +1,13 @@
+dependencies
+- body-parser :-
+- bcryptjs :- Hashed password (private data) of user   
+- validator :- VAlid different data  
+- nodemailer :- OTP based forget parser 
+- cookie-parser :- parse cookie
+- jsonwebtoken :- 
+
+
+
 
 
 APIs:-

@@ -15,6 +15,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 // Get ALl Products
 export const getAllProducts = asyncHandler(async (req, res, next) => {
   const resultsPerPage = 10;
+  const productCount= await Product.countDocuments();
   // apifeature is instance of ApiFeature
   const apiFeature = new ApiFeature(Product.find(), req.query)
     .search()
@@ -40,6 +41,7 @@ export const getProductDetails = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     succes: true,
     product,
+    productCount,
   });
 });
 
