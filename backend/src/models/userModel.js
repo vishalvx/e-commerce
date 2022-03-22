@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validtor from "validator";
+import bcrypt from "bcryptjs"; 
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -38,4 +39,11 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
 });
 
-export default mongoose.Model("User", userSchema);
+userSchema.pre("save",async function(next){
+  if(!this.isModified("password")){
+    next();
+  }
+  this.password = await bcrypt.hash(this.password,10);
+})
+
+export default mongoose.model("User", userSchema);

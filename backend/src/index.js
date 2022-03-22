@@ -3,7 +3,8 @@ import "./config.js";
 import { connectDb } from "./db.js";
 import  errorMiddleware  from "./middleware/error.js";
 //import Router and rename it
-import products from "./routes/productsRoutes.js"
+import products from "./routes/productsRoutes.js";
+import user from "./routes/userRoutes.js";
 
 
 // making instance
@@ -22,7 +23,8 @@ app.use(express.urlencoded({extended:true}))
 
 // Routes 
 
-app.use("/api",products)
+app.use("/api",products);
+app.use("/api",user);
 
 // error handler middleware
 // this middleware must use below routes call

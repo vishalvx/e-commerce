@@ -1,6 +1,8 @@
-import asyncHandler from "../middleware/catchAsyncErrors.js";
+//import model
 import Product from "../models/productModel.js";
+//utils
 import ApiFeature from "../utils/ApiFeature.js";
+import asyncHandler from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
 // Create Product -- Admin
@@ -28,6 +30,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     products,
+    productCount,
   });
 });
 
@@ -41,7 +44,6 @@ export const getProductDetails = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     succes: true,
     product,
-    productCount,
   });
 });
 
