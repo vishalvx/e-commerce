@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import "./config.js";
 import { connectDb } from "./db.js";
 import  errorMiddleware  from "./middleware/error.js";
@@ -9,6 +9,7 @@ import user from "./routes/userRoutes.js";
 
 // making instance
 const app = express();
+
 var server;
 
 // Uncaught Error Handling

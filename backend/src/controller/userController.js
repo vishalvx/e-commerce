@@ -3,8 +3,10 @@ import User from "../models/userModel.js";
 // utils
 import ErrorHandler from "../utils/errorHandler.js";
 import asyncHandler from "../middleware/catchAsyncErrors.js";
+import sendToken from "../utils/sendToken.js";
 
 // Create User -- Admin
+//first create user and then send back JWTtoken
 export const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
 
@@ -18,14 +20,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     },
   });
 
-  //JWT TOKEN
-
-  const token = await user.getJWTToken();
-
-  res.status(201).json({
-    success: true,
-    token,
-  });
+  sendToken(res, 200, user);
 });
 
 export const loginUser = asyncHandler(async (req, res, next) => {
@@ -47,9 +42,5 @@ export const loginUser = asyncHandler(async (req, res, next) => {
     return next(new ErrorHandler("Invalid email or Password", 401));
   }
 
-  const token = user.getJWTToken();
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendToken(res, 200, user);
 });

@@ -9,7 +9,7 @@ export const connectDb = async () => {
       process.env.MONGO_URI,
       {
         useNewUrlParser: true,
-        useUnifiedTopology:true,
+        
       }
     );
     console.log("Connected To DB 💾");
