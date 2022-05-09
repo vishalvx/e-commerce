@@ -44,3 +44,18 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 
   sendToken(res, 200, user);
 });
+
+//Logout User
+
+export const logoutUser = asyncHandler(async (req, res, next) => {
+  res
+    .status(201)
+    .cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    })
+    .json({
+      success: true,
+      message: "User Logout Successfully",
+    });
+});

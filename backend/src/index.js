@@ -5,6 +5,8 @@ import  errorMiddleware  from "./middleware/error.js";
 //import Router and rename it
 import products from "./routes/productsRoutes.js";
 import user from "./routes/userRoutes.js";
+import cookieParser  from "cookie-parser";
+
 
 
 // making instance
@@ -20,6 +22,7 @@ process.on("uncaughtException",(err)=>{
 })
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({extended:true}))
 
 // Routes 
