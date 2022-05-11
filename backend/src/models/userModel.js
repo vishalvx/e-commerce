@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import validtor from "validator";
 import bcrypt from "bcryptjs";
-import  jwt  from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -56,8 +57,37 @@ userSchema.methods.getJWTToken = function () {
 };
 
 //Compare password method
-userSchema.methods.comparePassword = async function(enteredPassword){
-  return await bcrypt.compare(enteredPassword,this.password);
-}
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// forget password token generation
+userSchema.methods.generateForgetPasswordToken = function () {
+  /**
+   * this line will generate resetToken
+   * randomBytes(20) will create 20 bit buffer
+   * toString("hex") will convert buffer in hex string
+   */
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // console.log("reset.token",resetToken);
+  /**
+   * this line generate hash of resetToken
+   * createHash("sha256") will use sha256 Algorithm for generate hash
+   * update(reserToken)
+   * digest("hex")
+   */
+  this.resetPasswordTokan = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  // console.log("Hash:",crypto.createHash("sha256").update(resetToken).digest("hex"));
+  // console.log("Time:",Date.now() + 15*60*60);
+
+  // current time + 15 min
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 60;
+
+  return resetToken;
+};
 
 export default mongoose.model("User", userSchema);

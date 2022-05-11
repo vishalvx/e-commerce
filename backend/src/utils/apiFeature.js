@@ -26,7 +26,7 @@ export default class ApiFeature {
         }
       : {};
 
-    console.log(keyword);
+    // console.log(keyword);
     this.query = this.query.find({ ...keyword });
     // we return this search method object
     return this;
@@ -60,7 +60,7 @@ export default class ApiFeature {
     const currentPage = Number(this.queryStr.page) || 1; //e.g. page =2
     const skip = resultsPerPage * (currentPage-1); //10 * (1) 
     this.query = this.query.limit(resultsPerPage).skip(skip);
-    console.log("currentPage "+currentPage,"Skip "+skip)
+    // console.log("currentPage "+currentPage,"Skip "+skip)
     return this;
   }
 }

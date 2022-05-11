@@ -7,6 +7,8 @@ import ErrorHandler from "../utils/errorHandler.js";
 
 // Create Product -- Admin
 export const createProduct = asyncHandler(async (req, res, next) => {
+  req.body.user = req.user.id;
+
   const product = await Product.create(req.body);
 
   res.status(201).json({
@@ -17,7 +19,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 // Get ALl Products
 export const getAllProducts = asyncHandler(async (req, res, next) => {
   const resultsPerPage = 10;
-  const productCount= await Product.countDocuments();
+  const productCount = await Product.countDocuments();
   // apifeature is instance of ApiFeature
   const apiFeature = new ApiFeature(Product.find(), req.query)
     .search()
