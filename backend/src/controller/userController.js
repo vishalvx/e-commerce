@@ -150,3 +150,117 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
   sendToken(res, 200, user);
 });
+
+//Get User Profile
+export const getProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return next(new ErrorHandler("User Not found"));
+  }
+  res.status(200).json({
+    success: true,
+    user
+  });
+});
+//Update User Profile
+export const updateUserProfile = asyncHandler(async (req, res, next) => {
+  const userNewData = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  await User.findByIdAndUpdate(req.user.id, userNewData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "user update Successfully",
+  });
+});
+
+//Update password If User is Login
+export const updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!user) {
+    return next(new ErrorHandler("User Does not Exist", 400));
+  }
+
+  const isPasswordMatched = user.comparePassword(req.body.oldPassword);
+
+  if (isPasswordMatched) {
+    next(new ErrorHandler("Old Password is Invalid", 400));
+  }
+
+  if (req.body.newPassword !== registerUser.body.confirmPassword) {
+    next(new ErrorHandler("Enter Same new password", 400));
+  }
+
+  user.password = req.body.newPassword;
+  await user.save();
+
+  sendToken(res, 200, user);
+});
+
+// get Users --ADMIN
+export const getUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find();
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+// get single User --ADMIN
+export const getSingleUser = asyncHandler(async (req, res, next) => {
+ 
+
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new ErrorHandler(`${req.params.id} does not exists`, 400));
+  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+// Update Roll User --ADMIN
+export const updateRoll = asyncHandler(async (req, res, next) => {
+  const updateDetails = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+  const user = await User.findByIdAndUpdate(req.params.id,updateDetails, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  if (!user) {
+    return next(new ErrorHandler(`${req.params.id} does not exists`, 400));
+  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+// Delete User --ADMIN
+export const deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new ErrorHandler(`${req.params.id} does not exists`, 400));
+  }
+
+  await user.delete();
+  
+  res.status(200).json({
+    success: true,
+    message: "User Delete Successfully",
+  });
+});

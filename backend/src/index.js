@@ -5,6 +5,7 @@ import  errorMiddleware  from "./middleware/error.js";
 //import Router and rename it
 import products from "./routes/productsRoutes.js";
 import user from "./routes/userRoutes.js";
+import order from "./routes/orderRoutes.js";
 import cookieParser  from "cookie-parser";
 
 
@@ -29,6 +30,7 @@ app.use(express.urlencoded({extended:true}))
 
 app.use("/api",products);
 app.use("/api",user);
+app.use("/api",order);
 
 // error handler middleware
 // this middleware must use below routes call

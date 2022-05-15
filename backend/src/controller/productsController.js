@@ -85,3 +85,102 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
     massage: "Product Deleted successfully",
   });
 });
+
+//Create Review
+
+export const createProductReview = asyncHandler(async (req, res, next) => {
+  //review Object
+  const { rating, comment, productId } = req.body;
+  const review = {
+    user: req.user._id,
+    name: req.user.name,
+    rating: Number(rating),
+    comment,
+  };
+
+  const product = await Product.findById(productId);
+
+  //check is there any review given by the same user
+
+  const isReviewed = product.reviews.find(
+    (review) => review.user.toString() === req.user._id.toString()
+  );
+
+  if (isReviewed) {
+    product.reviews.forEach((review) => {
+      if (review.user.toString() === req.user._id.toString()) {
+        review.rating = rating;
+        review.comment = comment;
+      }
+    });
+  } else {
+    product.reviews.push(review);
+    product.numOfReviews = product.reviews.length;
+  }
+
+  //add product average rating
+  let totalRating = 0;
+  product.reviews.forEach((review) => {
+    totalRating += review.rating;
+  });
+
+  product.ratings = totalRating / product.reviews.length;
+
+  await product.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+//Delete Product Review
+export const deleteProductReview = asyncHandler(async (req, res, next) => {
+  const product = await Product.findById(req.query.productId);
+
+  if (!product) {
+    return next(new ErrorHandler("Product does not found", 400));
+  }
+
+  //Collect reviews except current review
+  const reviews = product.reviews.filter(
+    (review) => review.user.toString() !== req.user._id.toString()
+  );
+  //add product average rating
+  let totalRating = 0;
+  reviews.forEach((review) => {
+    totalRating += review.rating;
+  });
+
+  const ratings = totalRating / reviews.length;
+  const numOfReviews = reviews.length;
+
+  await Product.findByIdAndUpdate(
+    req.query.productId,
+    {
+      ratings,
+      numOfReviews,
+      reviews,
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+  res.status(200).json({
+    success: true,
+    massage: "Review delete successfully",
+  });
+});
+
+export const getProductAllReviews = asyncHandler(async (req, res, next) => {
+  const product = await Product.findById(req.query.productId);
+
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 400));
+  }
+  res.status(200).json({
+    success: true,
+    reviews: product.reviews,
+  });
+});
